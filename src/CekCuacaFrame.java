@@ -1,3 +1,11 @@
+import javax.swing.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import javax.swing.table.DefaultTableModel;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,12 +17,70 @@
  * @author ACER
  */
 public class CekCuacaFrame extends javax.swing.JFrame {
-
+       private javax.swing.JTable dataTable;
+       private javax.swing.JScrollPane scrollPane;
     /**
      * Creates new form CekCuacaFrame
      */
     public CekCuacaFrame() {
         initComponents();
+        dataTable = new JTable(new DefaultTableModel(new Object[]{"Kota", "Kondisi Cuaca"}, 0));
+        scrollPane = new JScrollPane(dataTable);
+        
+        cbKota.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    String selectedCity = (String) cbKota.getSelectedItem();
+                    txtKota.setText(selectedCity);  // Set kota text field dengan pilihan dari combo box
+                    System.out.println("Kota favorit dipilih: " + selectedCity);
+                }
+            }
+        });
+    }
+    
+    private void updateWeatherIcon(String condition) {
+    String iconPath = "/images/default.png";
+    
+    switch (condition.toLowerCase()) {
+        case "clear":
+        case "sunny":
+            iconPath = "/images/sunny.png";
+            break;
+        case "rain":
+        case "rainy":
+        case "patchy rain nearby":
+        case "showers":
+        case "patchy light rain":
+        case "moderate rain at times":
+            iconPath = "/images/rainy.png";
+            break;
+        case "cloudy":
+        case "overcast":
+        case "partly cloudy":
+            iconPath = "/images/cloudy.png";
+            break;
+        case "thunderstorm":
+        case "patchy light rain with thunder":
+        case "light rain shower":
+        case "storm":
+            iconPath = "/images/thunderstorm.png";
+            break;
+        default:
+            iconPath = "/images/default.png";
+            break;
+    }
+    
+    jGambar.setIcon(new ImageIcon(getClass().getResource(iconPath)));
+}
+    
+    private boolean kotaAdaDiComboBox(String kota) {
+    for (int i = 0; i < cbKota.getItemCount(); i++) {
+        if (cbKota.getItemAt(i).equalsIgnoreCase(kota)) {
+            return true;
+        }
+    }
+    return false;
     }
 
     /**
@@ -25,22 +91,215 @@ public class CekCuacaFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        jPanel1 = new javax.swing.JPanel();
+        txtKota = new javax.swing.JTextField();
+        bCekCuaca = new javax.swing.JButton();
+        jKondisi = new javax.swing.JLabel();
+        jGambar = new javax.swing.JLabel();
+        cbKota = new javax.swing.JComboBox<>();
+        bTambahList = new javax.swing.JButton();
+        bSimpanData = new javax.swing.JButton();
+        bMuat = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblData = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(153, 153, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Aplikasi Cek Cuaca", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 3, 18))); // NOI18N
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        txtKota.setColumns(25);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel1.add(txtKota, gridBagConstraints);
+
+        bCekCuaca.setBackground(new java.awt.Color(102, 255, 102));
+        bCekCuaca.setText("Cek Cuaca");
+        bCekCuaca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bCekCuacaActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel1.add(bCekCuaca, gridBagConstraints);
+
+        jKondisi.setText("Cek Kondisi Cuaca");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel1.add(jKondisi, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.insets = new java.awt.Insets(8, 8, 8, 8);
+        jPanel1.add(jGambar, gridBagConstraints);
+
+        cbKota.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Banjarmasin", "Banjarbaru", "Jakarta", "Bali" }));
+        cbKota.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbKotaItemStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel1.add(cbKota, gridBagConstraints);
+
+        bTambahList.setText("Tambah ke List");
+        bTambahList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bTambahListActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel1.add(bTambahList, gridBagConstraints);
+
+        bSimpanData.setBackground(new java.awt.Color(0, 204, 153));
+        bSimpanData.setText("Simpan Data");
+        bSimpanData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSimpanDataActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel1.add(bSimpanData, gridBagConstraints);
+
+        bMuat.setBackground(new java.awt.Color(0, 204, 153));
+        bMuat.setText("Muat Data");
+        bMuat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bMuatActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel1.add(bMuat, gridBagConstraints);
+
+        tblData.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Kota", "Kondisi Cuaca"
+            }
+        ));
+        jScrollPane1.setViewportView(tblData);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.ipadx = 400;
+        gridBagConstraints.ipady = 150;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        jPanel1.add(jScrollPane1, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void bCekCuacaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCekCuacaActionPerformed
+       // Ambil input kota dari JTextField atau dari pilihan JComboBox
+        String city = txtKota.getText();
+        
+        // Panggil method getWeather dan ambil data cuaca
+        String weatherCondition = CekCuacaClass.getWeather(city);
+        
+        // Tampilkan kondisi cuaca di JLabel
+        jKondisi.setText("Kondisi Cuaca : " + weatherCondition);
+        
+        // Update gambar berdasarkan kondisi cuaca
+        updateWeatherIcon(weatherCondition);
+    }//GEN-LAST:event_bCekCuacaActionPerformed
+
+    private void bTambahListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bTambahListActionPerformed
+        String kotaFavorit = txtKota.getText();
+        if (!kotaFavorit.isEmpty() && !kotaAdaDiComboBox(kotaFavorit)) {
+            cbKota.addItem(kotaFavorit);
+            System.out.println("Kota " + kotaFavorit + " ditambahkan ke favorit.");
+        } else {
+            System.out.println("Kota sudah ada di favorit atau input kosong.");
+        }            
+    }//GEN-LAST:event_bTambahListActionPerformed
+
+    private void bSimpanDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSimpanDataActionPerformed
+         try (PrintWriter writer = new PrintWriter(new File("dataCuaca.csv"))) {
+            writer.println("Kota, Kondisi Cuaca");
+            String city = txtKota.getText();
+            String weatherCondition = jKondisi.getText().replace("Kondisi Cuaca : ", "");
+            writer.println(city + ", " + weatherCondition);
+            JOptionPane.showMessageDialog(null, "Data cuaca berhasil disimpan ke CSV");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+    }                             
+    }//GEN-LAST:event_bSimpanDataActionPerformed
+
+    private void bMuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bMuatActionPerformed
+        DefaultTableModel model = (DefaultTableModel) tblData.getModel();
+
+    try (BufferedReader br = new BufferedReader(new FileReader("dataCuaca.csv"))) {
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (line.startsWith("Kota")) continue; // Skip header row
+
+            String[] data = line.split(",");
+            model.addRow(data); // Add data to the table without clearing it
+        }
+        JOptionPane.showMessageDialog(null, "Data berhasil dimuat dari CSV");
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }                           
+    }//GEN-LAST:event_bMuatActionPerformed
+
+    private void cbKotaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbKotaItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbKotaItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -78,5 +337,16 @@ public class CekCuacaFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bCekCuaca;
+    private javax.swing.JButton bMuat;
+    private javax.swing.JButton bSimpanData;
+    private javax.swing.JButton bTambahList;
+    private javax.swing.JComboBox<String> cbKota;
+    private javax.swing.JLabel jGambar;
+    private javax.swing.JLabel jKondisi;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblData;
+    private javax.swing.JTextField txtKota;
     // End of variables declaration//GEN-END:variables
 }
